@@ -2,9 +2,9 @@ const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
 cloudinary.config({ 
-    cloud_name: "dmuqar3zu", 
-    api_key:"219829672445948",
-    api_secret:"F_CMK7WxaP_yy2RjAZiqv0iY1Sc"
+  cloud_name: "CLOUD NAME WILL BE ADDED", 
+  api_key:"API KEY WILL BE ADDED",
+   api_secret:"API SECRET WILL BE ADDED"
   });
 
 const uploadFileOnCloudinary = async (localfilePath)=>{
@@ -24,5 +24,7 @@ const uploadFileOnCloudinary = async (localfilePath)=>{
 
 };
 
-export default uploadFileOnCloudinary;
+module.exports = {
+  uploadFileOnCloudinary
+}
 

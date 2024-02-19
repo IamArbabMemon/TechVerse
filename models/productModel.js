@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema({
         trim:true
     },
 
-    storeReference:{
+    storeOwnerProfileRef:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'wholeSellerProfiles',
         default:null
