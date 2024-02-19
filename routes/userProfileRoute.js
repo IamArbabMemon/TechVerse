@@ -86,14 +86,14 @@ userProfileRouter.post('/wholeSellerSignUp',async(req,res)=>{
         
         return res.json({message:'Success'});
      
-     })
+     });
      
 
      userProfileRouter.post('/wholeSellerLogin',async(req,res)=>{
         if(!req.body)
           return res.status(400).json({message:'Empty body'});    
 
-        const userpayload = await wholeSellerProfileModel.findOne({username:req.body.username});
+        const userpayload = await wholeSellerProfileModel.findOne({businessName:req.body.businessName});
         
         if(!userpayload)
             return res.status(404).send('User not found');
@@ -104,10 +104,12 @@ userProfileRouter.post('/wholeSellerSignUp',async(req,res)=>{
                 return res.send('Wrong password');
         
         
-        const token = await jwt.sign({username:req.body.username,password:req.body.password},secretKey);    
+        const token = await jwt.sign({businessName:req.body.businessName,password:req.body.password},secretKey);    
         
         return res.cookie('jsonToken',token).json({message:"Token has been set"});
-})
+});
+
+
 
 
 userProfileRouter.get('/getUser/:businessName',async (req,res)=>{
