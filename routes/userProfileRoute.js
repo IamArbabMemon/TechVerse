@@ -42,7 +42,7 @@ userProfileRouter.post('/login',async(req,res)=>{
         if(!req.body)
           return res.status(400).json({message:'Empty body'});    
 
-        const userpayload = await userProfileModel.findOne({username:req.body.username});
+        const userpayload = await userProfileModel.findOne({username:req.body.businessName});
         
         if(!userpayload)
             return res.status(404).send('User not found');
@@ -53,7 +53,7 @@ userProfileRouter.post('/login',async(req,res)=>{
                 return res.status(404).json({message:'Wrong Password'})
         
         
-        const token = await jwt.sign({username:req.body.username,password:req.body.password},secretKey);    
+        const token = await jwt.sign({username:req.body.businessName,password:req.body.password},secretKey);    
         
         return res.cookie('jsonToken',token).json({message:"Token has been set"});
 })
@@ -108,6 +108,31 @@ userProfileRouter.post('/wholeSellerSignUp',async(req,res)=>{
         
         return res.cookie('jsonToken',token).json({message:"Token has been set"});
 })
+
+
+userProfileRouter.get('/getUser/:businessName',async (req,res)=>{
+        if(!req.params.businessName)
+        return res.status(400).json({error:'EMPTY PARAMS IN URL'});
+
+       try{
+
+            const user = await userProfileModel.findOne({businessName:req.params.businessName});
+            
+            if(!user)
+            return res.status(400).json({error:'USER NOT FOUND !!'});
+
+           
+            return res.status(200).json(user);
+
+
+       }catch(err){
+        return res.status(400).json({error:err});
+
+       } 
+
+
+})
+
 
 
 module.exports = {

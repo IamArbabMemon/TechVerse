@@ -21,7 +21,14 @@ const orderSchema = new mongoose.Schema({
           },
     },
 
-    storeName:String
+    orderedBy:String,
+
+    profit:Number,
+    
+    status:{
+        type:String,
+        default:"Pending"
+    }
 
 },{timestamps:true});
 
@@ -31,12 +38,5 @@ module.exports = {
     orderCollection
 }
 
-// (
-//     async ()=>{
-//         const returned  = await orderModel.create({productId:"65707ab7f13f06d153a0ab4b",customerDetails:{name:'arbab',batch:6574,address:'thandi srak'}});
-//         console.log(returned.customerDetails.address);
-//         const product = await productModel.productsCollection.findById(returned.productId);
-//         console.log(product);
-//     }
-// )()
+
 

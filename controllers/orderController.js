@@ -10,7 +10,7 @@ if(!req.body)
    
    try{
 
-        const {productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,storeName} = req.body
+        const {productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit} = req.body
 
         const order = await orderCollection.create({    
             productId,
@@ -19,7 +19,8 @@ if(!req.body)
                 phoneNumber,
                 address:{province,city,area,street,houseNo,postalCode}
             },
-            storeName
+            orderedBy,
+            profit
         });
 
         console.log(order);
