@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 const userAccountsSchema = new mongoose.Schema({
 
-    accountNumber:String,
+    accountNumber:{
+        type:String,
+        unique:true
+    },
 
     totalProfit:{
         type:Number,

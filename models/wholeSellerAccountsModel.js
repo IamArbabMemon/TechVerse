@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 const wholeSellerAccountSchema = new mongoose.Schema({
 
-    accountNumber:String,
+    accountNumber:{
+        type: String,
+        unique:true
+    },
 
     totalSale:{
         type:Number,
