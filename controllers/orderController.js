@@ -64,5 +64,6 @@ async function cancelOrder(req,res){
 
 
 module.exports = {
-    placeOrder
+    placeOrder,
+    cancelOrder
 }
