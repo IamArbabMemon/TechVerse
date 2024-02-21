@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const {orderCollection} = require('../models/orderModel');
 const {userAccountModel} = require('../models/userAccountsModel');
 const {userProfileModel,wholeSellerProfileModel} = require('../models/userProfileModel');
@@ -38,7 +39,29 @@ if(!req.body)
     }
 
 
+};
+
+
+async function cancelOrder(req,res){
+    if(!req.params.orderId)
+        return res.status(400).json({error:'Empty'})
+
+    try{
+
+        const orderDetails = await orderCollection.findOneAndDelete({_id:orderId});
+        await userAccountModel.findOneAndUpdate({accountNumber : ( await userProfileModel.findOne({businessName:orderDetails.orderedBy}) ).accountNumber} , { $pull:{'ordersHistory': new mongoose.Types.ObjectId(orderId)} });
+        await wholeSellerAccountModel.findOneAndUpdate({accountNumber : ( await wholeSellerProfileModel.findOne({businessName:orderDetails.orderedBy}) ).accountNumber} , { $pull:{'ordersHistory': new mongoose.Types.ObjectId(orderId)} });
+        
+        return res.status(200).json({success:'Order has been deleted'});             
+
+    }catch(err){
+        res.status(500).json({error:err});
+    }    
+
 }
+
+
+
 
 module.exports = {
     placeOrder
