@@ -8,6 +8,7 @@ const orderSchema = new mongoose.Schema({
         default:null
     },
 
+
     customerDetails:{
           name: String,
           phoneNumber:String,
@@ -39,4 +40,14 @@ module.exports = {
 }
 
 
+/*
 
+user accounts :
+
+accountNumber: string,unique
+
+total profit : number, default 0
+
+orderHistory : orders[]
+
+*/

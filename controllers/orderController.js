@@ -1,5 +1,7 @@
 const {orderCollection} = require('../models/orderModel');
-
+const {userAccountModel} = require('../models/userAccountsModel');
+const {userProfileModel,wholeSellerProfileModel} = require('../models/userProfileModel');
+const { wholeSellerAccountModel } = require('../models/wholeSellerAccountsModel');
 
 async function placeOrder(req,res){
 console.log(req.body)
@@ -23,7 +25,11 @@ if(!req.body)
             profit
         });
 
-        console.log(order);
+        const UserAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+        const wholeSellerAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+
+        await userAccountModel.findOneAndUpdate({accountNumber:UserAccountNumber},{$push:{ordersHistory:order_id}});
+        await wholeSellerAccountModel.findOneAndUpdate({accountNumber:wholeSellerAccountNumber},{$push:{ordersHistory:order_id}});
 
         res.status(200).json({message:'Order has been placed'});
 

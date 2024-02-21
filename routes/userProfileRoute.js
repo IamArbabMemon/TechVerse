@@ -1,4 +1,6 @@
 const {userProfileModel,wholeSellerProfileModel} = require('../models/userProfileModel.js'); 
+const {userAccountModel} = require('../models/userAccountsModel.js');
+const {wholeSellerAccountModel} = require('../models/wholeSellerAccountsModel.js');
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -26,6 +28,10 @@ userProfileRouter.post('/signUp',async(req,res)=>{
             accountNumber:req.body.accountNumber,
             mobileNumber:req.body.mobileNumber,
             password:hashedPass
+    });
+
+    await userAccountModel.create({
+        accountNumber:req.body.accountNumber,
     });
 
    }catch(err){
@@ -79,6 +85,11 @@ userProfileRouter.post('/wholeSellerSignUp',async(req,res)=>{
                  password:hashedPass
          });
      
+          await wholeSellerAccountModel.create({
+                accountNumber:req.body.accountNumber
+          });
+              
+
         }catch(err){
          console.log(err);
          return res.status(400).json({message:'something went wrong'});
