@@ -3,6 +3,7 @@ const {orderCollection} = require('../models/orderModel');
 const {userAccountModel} = require('../models/userAccountsModel');
 const {userProfileModel,wholeSellerProfileModel} = require('../models/userProfileModel');
 const { wholeSellerAccountModel } = require('../models/wholeSellerAccountsModel');
+const { productsCollection } = require('../models/productModel');
 
 async function placeOrder(req,res){
 console.log(req.body)
@@ -44,7 +45,7 @@ if(!req.body)
 
 async function cancelOrder(req,res){
     if(!req.params.orderId)
-        return res.status(400).json({error:'Empty'})
+        return res.status(400).json({error:'Empty orderID'});
 
     try{
 
@@ -58,6 +59,40 @@ async function cancelOrder(req,res){
         res.status(500).json({error:err});
     }    
 
+};
+
+
+async function orderDelivered(req,res){
+    if(!req.params.orderId)
+    return res.status(400).json({error:'Empty orderId'});
+
+    try{
+
+        const order = await orderCollection.findById(req.params.orderId);
+        const product = await productsCollection.findById(order.productId);
+        
+        const wholeSellerAccountNumber = ( await userProfileModel.findOne({businessName:order.orderedBy}) ).accountNumber;
+        const wholeSellerAccountObject = await wholeSellerAccountModel.findOne({accountNumber:wholeSellerAccountNumber});
+        
+        const userAccountNumber = ( await userProfileModel.findOne({businessName:order.orderedBy}) ).accountNumber;
+        const userAccountObject  = await userAccountModel.findOne({accountNumber:userAccountNumber});
+
+
+        userAccountObject.totalProfit+=order.profit;
+        userAccountObject.save();
+        wholeSellerAccountObject.totalSale+=product.price;
+        wholeSellerAccountObject.save();
+
+        order.status = "Delivered";
+        order.save();
+
+
+    return res.status(200).json({success:'Order has been delivered successfully'});
+
+    }catch(err){
+        res.status(400).json({error:err});
+    }
+
 }
 
 
@@ -65,5 +100,6 @@ async function cancelOrder(req,res){
 
 module.exports = {
     placeOrder,
-    cancelOrder
+    cancelOrder,
+    orderDelivered
 }

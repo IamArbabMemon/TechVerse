@@ -103,11 +103,24 @@ async function addProduct(req,res){
 }
 
 
+async function deleteProduct(req,res){
+    if(!req.params.productId)
+        return res.status(400).json({error:"productId is empty"});
+
+  const deletedProduct =  await productsCollection.deleteOne({_id:req.params.productId});
+
+    
+    return res.status(200).json({success:'Product has been deleted'});
+}
+
+
+
 module.exports = {
     getAllProducts,
     getProductsByCategory,
     getProductsByName,
     getProductsByNameAndCategory,
-    addProduct
+    addProduct,
+    deleteProduct
 }
 
