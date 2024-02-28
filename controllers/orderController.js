@@ -70,6 +70,7 @@ async function orderDelivered(req,res){
 
         const order = await orderCollection.findById(req.params.orderId);
         const product = await productsCollection.findById(order.productId);
+
         
         const wholeSellerAccountNumber = ( await userProfileModel.findOne({businessName:order.orderedBy}) ).accountNumber;
         const wholeSellerAccountObject = await wholeSellerAccountModel.findOne({accountNumber:wholeSellerAccountNumber});
@@ -86,6 +87,8 @@ async function orderDelivered(req,res){
         order.status = "Delivered";
         order.save();
 
+        product.quantity -=1;
+        product.save(); 
 
     return res.status(200).json({success:'Order has been delivered successfully'});
 
