@@ -111,10 +111,23 @@ async function deleteProduct(req,res){
 
     
     return res.status(200).json({success:'Product has been deleted'});
+};
+
+
+async function updateProduct(req,res){
+    if(!req.body)
+    return res.status(400).json({error:"Empty Request Body"});
+    try{
+
+    await productsCollection.findOneAndReplace({_id:req.body.productId},req.body);
+    
+    return res.status(200).json({success:'Product details has been updated'});
+        
+}catch(err){
+       console.log(err);
+        return res.status(400).json({error:err});
+    }
 }
-
-
-
 
 
 module.exports = {
@@ -123,6 +136,7 @@ module.exports = {
     getProductsByName,
     getProductsByNameAndCategory,
     addProduct,
-    deleteProduct
+    deleteProduct,
+    updateProduct
 }
 
