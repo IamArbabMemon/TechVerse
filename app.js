@@ -1,6 +1,8 @@
 const {userProfileRouter} = require('./routes/userProfileRoute.js');
 const {productRouter} = require('./routes/productsRoutes.js');
 const {orderRouter} = require('./routes/orderRoutes.js')
+const {userAccountRouter} = require('./routes/userAccountsRoutes.js');
+const {wholeSellerAccountRouter} = require('./routes/wholeSellerAccountsRoutes.js')
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
@@ -13,6 +15,10 @@ app.use(cookieParser());
 app.use('/user',userProfileRouter);
 app.use('/products',productRouter);
 app.use('/orders',orderRouter);
+app.use('/userAccount',userAccountRouter);
+app.use('/wholeSellerAccount',wholeSellerAccountRouter);
+
+
 
 
 
