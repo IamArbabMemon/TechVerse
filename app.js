@@ -6,8 +6,12 @@ const {wholeSellerAccountRouter} = require('./routes/wholeSellerAccountsRoutes.j
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
 const app = express();
+const cors = require('cors');
+
+require('dotenv').config({
+    path: './.env'
+});
 
 app.use(cors());
 app.use(express.json());
