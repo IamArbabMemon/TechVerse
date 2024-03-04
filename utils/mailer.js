@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendMail = async (user,subject)=>{
+const sendWelcomeMail = async (user,subject)=>{
     
     let textToSend = ACCOUNT_CREATION_TEXT;
     textToSend = textToSend.replace("[User]",user.username);
@@ -35,5 +35,35 @@ const sendMail = async (user,subject)=>{
 
 };
 
-export default sendMail;
+const sendOTPEmail = async (OTP,subject,email)=>{
+    
+    let textToSend = `HELLO DEAR USER YOUR OTP CODE IS :  ${OTP}`
+    
+    try{
+        
+        const info = await transporter.sendMail({
+            from: `TechVerse Team <${COMPANY_EMAIL}>`, // sender address
+            to: email, // list of receivers
+            subject: subject, // Subject line
+            text: textToSend, // plain text body
+            html:""// html body
+          });
+
+          return info;
+
+      }catch(err){
+
+        console.log("FAILED TO SEND EMAIL");
+        return null;
+    }
+
+};
+
+
+
+
+module.exports = {
+sendWelcomeMail,
+sendOTPEmail
+}
 

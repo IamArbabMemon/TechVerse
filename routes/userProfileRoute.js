@@ -1,6 +1,10 @@
 const {userProfileModel,wholeSellerProfileModel} = require('../models/userProfileModel.js'); 
 const {userAccountModel} = require('../models/userAccountsModel.js');
 const {wholeSellerAccountModel} = require('../models/wholeSellerAccountsModel.js');
+const {sendOTPEmail} = require('../utils/mailer.js');
+const {tempCollection} = require('../models/TempModel.js');
+
+const shortID = require('short-unique-id');
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -144,8 +148,61 @@ userProfileRouter.get('/getUser/:businessName',async (req,res)=>{
        } 
 
 
-})
+});
 
+userProfileRouter.get('/getOTP/:email',async(req,res)=>{
+        if(!req.params.email)
+        return res.status(400).json({error:'EMPTY EMAIL IN PARAMETER'});
+
+        try{
+
+           const user = await userProfileModel.findOne({email:req.params.email});     
+
+         if(!user)
+            return res.status(404).json({error:'USER NOT FOUND'});      
+           
+           
+              const OTPGenerator = new shortID();
+              const OTP = OTPGenerator.rnd();
+
+              sendOTPEmail(OTP,'OTP CODE TO UPDATE PASSWORD',req.params.email);  
+             
+              await tempCollection.create({
+                email:req.params.email,
+                otp:OTP
+              });
+
+              return res.status(200).json({success:"OTP Has Been Sent"});
+
+        }catch(err){
+            console.log(err);
+            return res.status(400).json({error:err});
+        }
+
+});
+
+
+  userProfileRouter.post('/updatePassword',async (req,res)=>{
+      if(!req.body)
+        return res.status(400).json({error:'Empty Request Body'});
+
+      try{
+
+          const tempUser = await tempCollection.findOne({email:req.body.email});      
+          
+          if(!(tempUser.otp ===req.body.otp))
+          return res.status(400).json({error:'OTP NOT MATCHED'});
+
+          const hashedPass = await bcrypt.hash(req.body.password,10);
+        const user = await userProfileModel.findOneAndUpdate({email:req.body.email},{password:hashedPass});
+
+          return res.status(200).json({success:'Password has been updated'});
+
+      }catch(err){
+        console.log(err);
+        return res.status(400).json({error:err});
+      } 
+  });
 
 
 module.exports = {
