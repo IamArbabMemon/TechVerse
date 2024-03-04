@@ -1,6 +1,6 @@
 const express = require('express');
 const productRouter = express.Router();
-const {getAllProducts,getProductsByCategory,getProductsByNameAndCategory, getProductsByName,addProduct,deleteProduct,updateProduct} = require('../controllers/productsController');
+const {getAllProducts,getProductsByCategory,getProductsByNameAndCategory, getProductsByName,addProduct,deleteProduct,updateProduct,getProductByBusinessName} = require('../controllers/productsController');
 const {upload} = require('../middlewares/multer.middleware.js');
 
 
@@ -17,6 +17,8 @@ productRouter.post('/addProduct',upload.fields([{name:'image',maxCount:1}]),addP
 productRouter.delete('/deleteProduct/:productId',deleteProduct);
 
 productRouter.post('/updateProduct',updateProduct);
+
+productRouter.get('/:businessName',getProductByBusinessName);
 
 module.exports = {
     productRouter

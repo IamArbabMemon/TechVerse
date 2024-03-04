@@ -5,8 +5,9 @@ const { uploadFileOnCloudinary } = require('../utils/cloudinaryUploader');
 async function getAllProducts(req,res){
     try{
       const allProducts = await productsCollection.find({}); 
-      console.log(allProducts) 
-       return res.json(allProducts); 
+    
+      return res.json(allProducts); 
+
     }catch(err){
         return res.status(400).json({message:err});
     } 
@@ -21,7 +22,7 @@ async function getProductsByCategory(req,res){
     try{
         
         const products = await productsCollection.find({category:req.params.category});
-        console.log(products);
+    
        return res.json(products); 
 
      }catch(err){
@@ -38,7 +39,6 @@ async function getProductsByNameAndCategory(req,res){
     try{
         
         const products = await productsCollection.find({$and:[{item:req.params.name},{category:req.params.category}]});
-        console.log(products);
        return res.json(products); 
 
      }catch(err){
@@ -49,7 +49,7 @@ async function getProductsByNameAndCategory(req,res){
 
 async function getProductsByName(req,res){
     
-    console.log(req.params);
+    
     if(!req.params.item)
          return res.status(400).json({message:'please insert the parameter with request'});
          
@@ -114,6 +114,8 @@ async function deleteProduct(req,res){
 };
 
 
+
+
 async function updateProduct(req,res){
     if(!req.body)
     return res.status(400).json({error:"Empty Request Body"});
@@ -130,6 +132,29 @@ async function updateProduct(req,res){
 }
 
 
+async function getProductByBusinessName(req,res){
+
+    if(!req.params.businessName)
+    return res.status(400).json({error:"Empty parameters provide businessName"});
+
+    try{
+
+        const products = await productsCollection.find({storeName:businessName});
+
+
+      return res.status(200).json(products);
+
+    }catch(err){
+ 
+        console.log(err);
+        return res.status(400).json({error:err});
+    }
+
+}
+
+
+
+
 module.exports = {
     getAllProducts,
     getProductsByCategory,
@@ -137,6 +162,7 @@ module.exports = {
     getProductsByNameAndCategory,
     addProduct,
     deleteProduct,
-    updateProduct
+    updateProduct,
+    getProductByBusinessName
 }
 
