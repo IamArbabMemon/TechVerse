@@ -23,7 +23,10 @@ const sendWelcomeMail = async (user,subject)=>{
     try{
         
         const info = await transporter.sendMail({
-            from: `TechVerse Team <${COMPANY_EMAIL}>`, // sender address
+            from: {
+                name:`TechVerse Team <${COMPANY_EMAIL}>`,
+                address:process.env.USER
+        }, // sender address
             to: user.email, // list of receivers
             subject: subject, // Subject line
             text: textToSend, // plain text body
