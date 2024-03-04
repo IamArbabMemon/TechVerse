@@ -1,12 +1,15 @@
 const nodemailer = require('nodemailer');
 const {COMPANY_EMAIL ,ACCOUNT_CREATION_TEXT} = require('../constants.js');
+require('dotenv').config({
+    path: './.env'
+});
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
+    service:"gmail",
+    host: 'smtp.gmail.com',
     auth: {
-        user: 'rubye.fisher99@ethereal.email',
-        pass: '8jQPm8QkMs7GB3ab6A'
+        user: process.env.USER,
+        pass: process.env.APP_PASSWORD
     }
 });
 
@@ -42,7 +45,10 @@ const sendOTPEmail = async (OTP,subject,email)=>{
     try{
         
         const info = await transporter.sendMail({
-            from: `TechVerse Team <${COMPANY_EMAIL}>`, // sender address
+            from: {
+                name:`TechVerse Team <${COMPANY_EMAIL}>`,
+                address:process.env.USER
+        }, // sender address
             to: email, // list of receivers
             subject: subject, // Subject line
             text: textToSend, // plain text body
@@ -53,7 +59,7 @@ const sendOTPEmail = async (OTP,subject,email)=>{
 
       }catch(err){
 
-        console.log("FAILED TO SEND EMAIL");
+        console.log("FAILED TO SEND EMAIL", err);
         return null;
     }
 

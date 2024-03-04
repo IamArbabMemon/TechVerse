@@ -6,8 +6,9 @@ const {wholeSellerAccountRouter} = require('./routes/wholeSellerAccountsRoutes.j
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const app = express();
 const cors = require('cors');
+const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
