@@ -196,6 +196,8 @@ userProfileRouter.get('/getOTP/:email',async(req,res)=>{
           const hashedPass = await bcrypt.hash(req.body.password,10);
         const user = await userProfileModel.findOneAndUpdate({email:req.body.email},{password:hashedPass});
 
+        await tempCollection.deleteOne({otp:tempUser.otp});
+
           return res.status(200).json({success:'Password has been updated'});
 
       }catch(err){
