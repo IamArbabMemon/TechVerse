@@ -14,7 +14,37 @@ if(!req.body)
    
    try{
 
-        const {productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit} = req.body
+        if(Array.isArray(req.body)){
+            let arr = [] ;
+            arr = req.body;
+            
+            arr.forEach(async (order)=>{
+                let { productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit } = order
+                
+                let orderObj = await orderCollection.create({    
+                    productId,
+                    customerDetails:{
+                        name,
+                        phoneNumber,
+                        address:{province,city,area,street,houseNo,postalCode}
+                    },
+                    orderedBy,
+                    profit
+                });
+       
+                const UserAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+                const wholeSellerAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+        
+                await userAccountModel.findOneAndUpdate({accountNumber:UserAccountNumber},{$push:{ordersHistory:orderObj._id}});
+                await wholeSellerAccountModel.findOneAndUpdate({accountNumber:wholeSellerAccountNumber},{$push:{ordersHistory:orderObj._id}});
+        
+            });
+            
+            res.status(200).json({message:'Orders has been placed'});    
+
+        }
+
+        const { productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit } = req.body
 
         const order = await orderCollection.create({    
             productId,
