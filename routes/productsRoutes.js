@@ -12,7 +12,6 @@ productRouter.get('/item/:itemName',getProductsByName);
 
 productRouter.get('/:category/:name',getProductsByNameAndCategory);
 
-
 productRouter.post('/addProduct',upload.fields([{name:'image',maxCount:1}]),addProduct);
 
 productRouter.delete('/deleteProduct/:productId',deleteProduct);
