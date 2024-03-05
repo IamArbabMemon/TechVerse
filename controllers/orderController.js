@@ -19,46 +19,49 @@ if(!req.body)
             arr = req.body;
             
             arr.forEach(async (order)=>{
-                let { productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit } = order
-                
+                // let { productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit } = order
+                let { productId,orderedBy,profit } = order;
+                let customerDetails = order.customerDetails;
+        
                 let orderObj = await orderCollection.create({    
                     productId,
-                    customerDetails:{
-                        name,
-                        phoneNumber,
-                        address:{province,city,area,street,houseNo,postalCode}
-                    },
+                    customerDetails:customerDetails,
                     orderedBy,
                     profit
                 });
-       
-                const UserAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
-                const wholeSellerAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+                console.log(productId);
+
+                let product = await productsCollection.findById(productId);
+                let storeName = product.storeName;
+
+
+                let UserAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+                let wholeSellerAccountNumber = ( await wholeSellerProfileModel.findOne({businessName:storeName}) ).accountNumber;
         
                 await userAccountModel.findOneAndUpdate({accountNumber:UserAccountNumber},{$push:{ordersHistory:orderObj._id}});
                 await wholeSellerAccountModel.findOneAndUpdate({accountNumber:wholeSellerAccountNumber},{$push:{ordersHistory:orderObj._id}});
         
             });
             
-            res.status(200).json({message:'Orders has been placed'});    
+            return res.status(200).json({message:'Orders has been placed'});    
 
         }
 
-        const { productId,name,phoneNumber,province,city,area,street,houseNo,postalCode,orderedBy,profit } = req.body
+        const { productId,orderedBy,profit } = req.body;
+        const customerDetails = req.body.customerDetails;
 
         const order = await orderCollection.create({    
             productId,
-            customerDetails:{
-                name,
-                phoneNumber,
-                address:{province,city,area,street,houseNo,postalCode}
-            },
+            customerDetails:customerDetails,
             orderedBy,
             profit
         });
+        
+        let product = await productsCollection.findById(productId);
+        let storeName = product.storeName;
 
         const UserAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
-        const wholeSellerAccountNumber = ( await userProfileModel.findOne({businessName:orderedBy}) ).accountNumber;
+        const wholeSellerAccountNumber = ( await wholeSellerProfileModel.findOne({businessName:storeName}) ).accountNumber;
 
         await userAccountModel.findOneAndUpdate({accountNumber:UserAccountNumber},{$push:{ordersHistory:order_id}});
         await wholeSellerAccountModel.findOneAndUpdate({accountNumber:wholeSellerAccountNumber},{$push:{ordersHistory:order_id}});
