@@ -142,7 +142,7 @@ async function getProductByBusinessName(req,res){
 
     try{
 
-        const products = await productsCollection.find({storeName:businessName});
+        const products = await productsCollection.find({storeName:req.params.businessName});
 
 
       return res.status(200).json(products);
