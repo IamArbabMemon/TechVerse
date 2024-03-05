@@ -4,9 +4,12 @@ const {getAllProducts,getProductsByCategory,getProductsByNameAndCategory, getPro
 const {upload} = require('../middlewares/multer.middleware.js');
 
 
+
 productRouter.get('/allProducts',getAllProducts);
 
 productRouter.get('/:category',getProductsByCategory);
+
+productRouter.get('/:businessName',getProductByBusinessName);
 
 productRouter.get('/item/:itemName',getProductsByName);
 
@@ -18,7 +21,7 @@ productRouter.delete('/deleteProduct/:productId',deleteProduct);
 
 productRouter.post('/updateProduct',updateProduct);
 
-productRouter.get('/:businessName',getProductByBusinessName);
+//productRouter.get('/:businessName',getProductByBusinessName);
 
 module.exports = {
     productRouter
