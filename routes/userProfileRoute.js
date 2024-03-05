@@ -150,6 +150,33 @@ userProfileRouter.get('/getUser/:businessName',async (req,res)=>{
 
 });
 
+
+userProfileRouter.get('/getWholeSeller/:businessName',async (req,res)=>{
+  if(!req.params.businessName)
+  return res.status(400).json({error:'EMPTY PARAMS IN URL'});
+
+ try{
+
+      const user = await wholeSellerProfileModel.findOne({businessName:req.params.businessName});
+      
+      if(!user)
+      return res.status(400).json({error:'USER NOT FOUND !!'});
+
+     
+      return res.status(200).json(user);
+
+
+ }catch(err){
+  return res.status(400).json({error:err});
+
+ } 
+
+
+});
+
+
+
+
 userProfileRouter.get('/getOTP/:email',async(req,res)=>{
         if(!req.params.email)
         return res.status(400).json({error:'EMPTY EMAIL IN PARAMETER'});
@@ -157,7 +184,7 @@ userProfileRouter.get('/getOTP/:email',async(req,res)=>{
         try{
 
            const user = await userProfileModel.findOne({email:req.params.email});     
-
+          console.log(user);
          if(!user)
             return res.status(404).json({error:'USER NOT FOUND'});      
            
@@ -180,6 +207,46 @@ userProfileRouter.get('/getOTP/:email',async(req,res)=>{
         }
 
 });
+
+
+
+
+
+userProfileRouter.get('/wholeSeller/getOTP/:email',async(req,res)=>{
+  if(!req.params.email)
+  return res.status(400).json({error:'EMPTY EMAIL IN PARAMETER'});
+
+  try{
+
+     const user = await wholeSellerProfileModel.findOne({email:req.params.email});     
+    console.log(user);
+   if(!user)
+      return res.status(404).json({error:'USER NOT FOUND'});      
+     
+     
+        const OTPGenerator = new shortID();
+        const OTP = OTPGenerator.rnd();
+
+        sendOTPEmail(OTP,'OTP CODE TO UPDATE PASSWORD',req.params.email);  
+       
+        await tempCollection.create({
+          email:req.params.email,
+          otp:OTP
+        });
+
+        return res.status(200).json({success:"OTP Has Been Sent"});
+
+  }catch(err){
+      console.log(err);
+      return res.status(400).json({error:err});
+  }
+
+});
+
+
+
+
+
 
 
   userProfileRouter.post('/updatePassword',async (req,res)=>{
@@ -205,6 +272,34 @@ userProfileRouter.get('/getOTP/:email',async(req,res)=>{
         return res.status(400).json({error:err});
       } 
   });
+
+
+
+  userProfileRouter.post('/wholeSeller/updatePassword',async (req,res)=>{
+    if(!req.body)
+      return res.status(400).json({error:'Empty Request Body'});
+
+    try{
+
+        const tempUser = await tempCollection.findOne({email:req.body.email});      
+        
+        if(!(tempUser.otp ===req.body.otp))
+        return res.status(400).json({error:'OTP NOT MATCHED'});
+
+        const hashedPass = await bcrypt.hash(req.body.password,10);
+      const user = await wholeSellerProfileModel.findOneAndUpdate({email:req.body.email},{password:hashedPass});
+
+      await tempCollection.deleteOne({otp:tempUser.otp});
+
+        return res.status(200).json({success:'Password has been updated'});
+
+    }catch(err){
+      console.log(err);
+      return res.status(400).json({error:err});
+    } 
+});
+
+
 
 
 module.exports = {
