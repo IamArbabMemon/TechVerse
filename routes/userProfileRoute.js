@@ -40,7 +40,7 @@ userProfileRouter.post('/signUp',async(req,res)=>{
 
    }catch(err){
     console.log(err);
-    return res.status(400).json({message:'something went wrong'});
+    return res.status(400).json({message:err});
    }
    
    return res.json({message:'Success'});
@@ -52,7 +52,7 @@ userProfileRouter.post('/login',async(req,res)=>{
         if(!req.body)
           return res.status(400).json({message:'Empty body'});    
 
-        const userpayload = await userProfileModel.findOne({username:req.body.businessName});
+        const userpayload = await userProfileModel.findOne({businessName:req.body.businessName});
         
         if(!userpayload)
             return res.status(404).send('User not found');
@@ -63,7 +63,7 @@ userProfileRouter.post('/login',async(req,res)=>{
                 return res.status(404).json({message:'Wrong Password'})
         
         
-        const token = await jwt.sign({username:req.body.businessName,password:req.body.password},secretKey);    
+        const token = await jwt.sign({businessName:req.body.businessName,password:req.body.password},secretKey);    
         
         return res.cookie('jsonToken',token).json({message:"Token has been set"});
 })
@@ -116,7 +116,7 @@ userProfileRouter.post('/wholeSellerSignUp',async(req,res)=>{
             const passIsCorrect = await bcrypt.compare(req.body.password,userpayload.password);
 
        if(!passIsCorrect)
-                return res.send('Wrong password');
+       return res.status(404).json({error:'Wrong Password'});    
         
         
         const token = await jwt.sign({businessName:req.body.businessName,password:req.body.password},secretKey);    
