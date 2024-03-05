@@ -37,8 +37,8 @@ async function getProductsByNameAndCategory(req,res){
         return res.status(404).json({message:'please insert the parameter with request'});
         
     try{
-        
-        const products = await productsCollection.find({$and:[{item:req.params.name},{category:req.params.category}]});
+        const item = req.params.name;
+        const products = await productsCollection.find({$and:[{item:item},{category:req.params.category}]});
        return res.json(products); 
 
      }catch(err){
@@ -50,18 +50,21 @@ async function getProductsByNameAndCategory(req,res){
 async function getProductsByName(req,res){
     
     
-    if(!req.params.item)
+    if(!req.params.itemName)
          return res.status(400).json({message:'please insert the parameter with request'});
+         
          
      try{
         
-         const products = await productsCollection.find({item:req.params.item});
-         return res.json(products); 
+         const products = await productsCollection.findOne({item:req.params.itemName});
+         console.log(products);
+         return res.status(200).json(products); 
  
       }catch(err){
          return res.status(400).json({message:err});
       } 
- };
+ 
+};
  
 
 
@@ -80,7 +83,7 @@ async function addProduct(req,res){
         const image = await uploadFileOnCloudinary(req.files.image[0].path);
 
      
-        const storeOwner = await userProfileModel.findOne({businessName:storeName});
+        const storeOwner = await wholeSellerProfileModel.findOne({businessName:storeName});
         const storeOwnerProfileRef = storeOwner._id;
 
      const newProduct = await productsCollection.create({

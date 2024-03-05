@@ -4,13 +4,14 @@ const {getAllProducts,getProductsByCategory,getProductsByNameAndCategory, getPro
 const {upload} = require('../middlewares/multer.middleware.js');
 
 
-productRouter.get('/',getAllProducts);
+productRouter.get('/allProducts',getAllProducts);
 
 productRouter.get('/:category',getProductsByCategory);
 
+productRouter.get('/item/:itemName',getProductsByName);
+
 productRouter.get('/:category/:name',getProductsByNameAndCategory);
 
-productRouter.get('/itemName/:item',getProductsByName);
 
 productRouter.post('/addProduct',upload.fields([{name:'image',maxCount:1}]),addProduct);
 
