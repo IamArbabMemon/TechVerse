@@ -83,17 +83,19 @@ async function cancelOrder(req,res){
     try{
 
         const orderDetails = await orderCollection.findOneAndDelete({_id:req.params.orderId});
+        console.log(orderDetails);
 
         let product = await productsCollection.findById(orderDetails.productId);
         let storeName = product.storeName;
 
 
-        await userAccountModel.findOneAndUpdate({accountNumber : ( await userProfileModel.findOne({businessName:orderDetails.orderedBy}) ).accountNumber} , { $pull:{'ordersHistory': new mongoose.Types.ObjectId(orderId)} });
-        await wholeSellerAccountModel.findOneAndUpdate({accountNumber : ( await wholeSellerProfileModel.findOne({businessName:storeName}) ).accountNumber} , { $pull:{'ordersHistory': new mongoose.Types.ObjectId(orderId)} });
+        await userAccountModel.findOneAndUpdate({accountNumber : ( await userProfileModel.findOne({businessName:orderDetails.orderedBy}) ).accountNumber} , { $pull:{'ordersHistory': new mongoose.Types.ObjectId(req.params.orderId)} });
+        await wholeSellerAccountModel.findOneAndUpdate({accountNumber : ( await wholeSellerProfileModel.findOne({businessName:storeName}) ).accountNumber} , { $pull:{'ordersHistory': new mongoose.Types.ObjectId(req.params.orderId)} });
         
         return res.status(200).json({success:'Order has been deleted'});             
 
     }catch(err){
+        console.log(err);
         res.status(500).json({error:err});
     }    
 
